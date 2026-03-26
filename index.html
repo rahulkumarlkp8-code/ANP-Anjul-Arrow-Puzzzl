@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANP – Anjul Arrow Puzzle (50 Levels)</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:black;
+    color:white;
+    text-align:center;
+}
+
+#splash{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#home{
+    display:none;
+    height:100vh;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.title{
+    font-size:36px;
+    margin-bottom:30px;
+}
+
+.btn{
+    background:#00ff99;
+    color:black;
+    border:none;
+    padding:15px 40px;
+    font-size:20px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+#game{
+    display:none;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(6,55px);
+    gap:8px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.box{
+    width:55px;
+    height:55px;
+    background:#111;
+    border-radius:12px;
+    font-size:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+.active{
+    background:#00ff99;
+    color:black;
+}
+
+.exit{
+    background:orange;
+    color:black;
+}
+
+.hearts{
+    font-size:28px;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+<h1>ANJUL ARROW PUZZLE</h1>
+</div>
+
+<div id="home">
+<div class="title">ANJUL ARROW PUZZLE</div>
+<button class="btn" onclick="startGame()">PLAY</button>
+</div>
+
+<div id="game">
+<h2 id="levelText">Level 1</h2>
+<div class="hearts" id="hearts">❤️❤️❤️❤️❤️</div>
+<div class="grid" id="grid"></div>
+</div>
+
+<script>
+
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("home").style.display="flex";
+},2000);
+
+function startGame(){
+document.getElementById("home").style.display="none";
+document.getElementById("game").style.display="block";
+}
+
+/* -------- LEVELS -------- */
+
+const levels = [];
+
+/* create 50 levels automatically */
+
+for(let n=0;n<50;n++){
+levels.push([
+["→","→","→","→","→","↓"],
+["↑","↑","↑","↑","→","↓"],
+["→","→","→","→","→","↓"],
+["↑","↑","↑","↑","→","↓"],
+["→","→","→","→","→","↓"],
+["↑","↑","↑","↑","→","E"]
+]);
+}
+
+let levelNumber = 0;
+let level = levels[levelNumber];
+
+let lives = 5;
+let x = 0;
+let y = 0;
+
+const grid = document.getElementById("grid");
+
+function updateHearts(){
+let h="";
+for(let i=0;i<lives;i++) h+="❤️";
+document.getElementById("hearts").innerText=h;
+}
+
+function draw(){
+
+grid.innerHTML="";
+
+for(let i=0;i<6;i++){
+for(let j=0;j<6;j++){
+
+let d=document.createElement("div");
+d.classList.add("box");
+
+if(i==x && j==y) d.classList.add("active");
+
+if(level[i][j]=="E"){
+d.innerHTML="EXIT";
+d.classList.add("exit");
+}else{
+d.innerHTML=level[i][j];
+}
+
+d.onclick=()=>move();
+grid.appendChild(d);
+}
+}
+
+document.getElementById("levelText").innerText = "Level " + (levelNumber+1);
+
+}
+
+function move(){
+
+let arrow=level[x][y];
+
+if(arrow=="↑") x--;
+if(arrow=="↓") x++;
+if(arrow=="←") y--;
+if(arrow=="→") y++;
+
+if(x<0 || y<0 || x>5 || y>5){
+lives--;
+updateHearts();
+
+if(lives==0){
+alert("Game Over");
+location.reload();
+return;
+}
+
+x=0;
+y=0;
+draw();
+return;
+}
+
+if(level[x][y]=="E"){
+levelNumber++;
+
+if(levelNumber>=levels.length){
+alert("You completed all 50 levels!");
+location.reload();
+return;
+}
+
+level = levels[levelNumber];
+x=0;
+y=0;
+draw();
+return;
+}
+
+draw();
+}
+
+updateHearts();
+draw();
+
+</script>
+
+</body>
+</html>
